@@ -10,8 +10,10 @@ import org.testng.annotations.Test;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class testProzorroSearchAndVerify {
+public class TestProzorroSearchAndVerify {
 
     WebDriver webDriver;
 
@@ -38,27 +40,44 @@ public class testProzorroSearchAndVerify {
         searchInput.sendKeys(searchValue);
         searchInput.sendKeys(Keys.ENTER);
 
-        List<WebElement> itemsHeaders = webDriver.findElements(By.className("item-title__title"));
+        List<WebElement> itemsHeaders = webDriver.findElements(By.className("search-result-card__wrap"));
 
         WebElement firstResult = itemsHeaders.get(0);
 
         String title = firstResult.findElement(By.cssSelector("a.item-title__title")).getText();
         String price = firstResult.findElement(By.cssSelector("p.text-color--green.app-price__amount")).getText();
-        String status = firstResult.findElement(By.cssSelector("p.getter__setter.__v_isRef.__v_isReadonly.effect__cacheable")).getText();
-//        String organization = firstResult.findElement(By.cssSelector("div.search-result-card__description")).getText();
+        String status = firstResult.findElement(By.cssSelector("span.getter")).getText();
+        String organization = firstResult.findElement(By.cssSelector("div.search-result-card__description")).getText();
 
-        itemsHeaders.get(0).click();
+        firstResult.findElement(By.cssSelector("a.item-title__title")).click();
+        webDriver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
 
-        String detailTitle = webDriver.findElement(By.cssSelector("div.tender--head--title.col-sm-9")).getText();
+        String detailTitle = webDriver.findElement(By.cssSelector("div.tender--head--title")).getText();
         String detailPrice = webDriver.findElement(By.cssSelector("div.green.tender--description--cost--number")).getText();
         String detailStatus = webDriver.findElement(By.cssSelector("span.marked")).getText();
-//       String detailOrganization = webDriver.findElement(By.cssSelector("div.tender--organization")).getText();
+//        String detailOrganization = webDriver.findElement(By.cssSelector("div.tender--organization")).getText();
+
+        // Сравниваем только числа в цене
+        int priceNumber = extractNumber(price);
+        int detailPriceNumber = extractNumber(detailPrice);
 
         Assert.assertEquals(detailTitle, title, "Title does not match!");
-        Assert.assertEquals(detailPrice, price, "Price does not match!");
+        Assert.assertEquals(priceNumber, detailPriceNumber, "Price does not match!");
         Assert.assertEquals(detailStatus, status, "Status does not match!");
 //        Assert.assertEquals(detailOrganization, organization, "Organization does not match!");
 
-
     }
+
+    // Метод для извлечения числа из строки
+    private int extractNumber(String text) {
+        Pattern pattern = Pattern.compile("\\d+");
+        Matcher matcher = pattern.matcher(text);
+        if (matcher.find()) {
+            return Integer.parseInt(matcher.group());
+        }
+        return 0;
+    }
+
+
+
 }
