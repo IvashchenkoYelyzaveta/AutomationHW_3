@@ -1,0 +1,10 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="automation6" parallel="classes" thread-count="1">
+
+    <test name="testProzorroSearchAndVerifyDetails">
+        <classes>
+            <class name="TestProzorroSearchAndVerify"/>
+        </classes>
+    </test>
+
+</suite>

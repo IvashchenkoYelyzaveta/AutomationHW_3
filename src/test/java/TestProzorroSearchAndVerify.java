@@ -55,7 +55,7 @@ public class TestProzorroSearchAndVerify {
         String detailTitle = webDriver.findElement(By.cssSelector("div.tender--head--title")).getText();
         String detailPrice = webDriver.findElement(By.cssSelector("div.green.tender--description--cost--number")).getText();
         String detailStatus = webDriver.findElement(By.cssSelector("span.marked")).getText();
-//        String detailOrganization = webDriver.findElement(By.cssSelector("div.tender--organization")).getText();
+        String detailOrganization = webDriver.findElement(By.xpath("//table[@class='tender--customer margin-bottom']//tr[1]/td[2]")).getText();
 
         // Сравниваем только числа в цене
         int priceNumber = extractNumber(price);
@@ -64,6 +64,7 @@ public class TestProzorroSearchAndVerify {
         Assert.assertEquals(detailTitle, title, "Title does not match!");
         Assert.assertEquals(priceNumber, detailPriceNumber, "Price does not match!");
         Assert.assertEquals(detailStatus, status, "Status does not match!");
+        Assert.assertEquals(extractBeforeSymbol(detailOrganization, '•'), extractBeforeSymbol(organization, '•'), "Organization does not match!");
 //        Assert.assertEquals(detailOrganization, organization, "Organization does not match!");
 
     }
@@ -78,6 +79,16 @@ public class TestProzorroSearchAndVerify {
         return 0;
     }
 
+    // Метод для извлечения части строки до указанного символа
+    private String extractBeforeSymbol(String text, char symbol) {
+        int index = text.indexOf(symbol);
+        if (index != -1) {
+            return text.substring(0, index).trim();
+        } else {
+            return text.trim();
+        }
+    }
 
+//table[@class='tender--customer margin-bottom']//tr[1]/td[2] поиск нашего элемента в таблице без привязки к тексту
 
 }
